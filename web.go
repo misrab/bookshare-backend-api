@@ -24,25 +24,29 @@ func main() {
     */
 
     // User
+    router.HandleFunc("/api/v1/users", func(res http.ResponseWriter, req *http.Request) {
+        handlers.BasicAuth(handlers.GetUsers)(res, req, dbmap)
+    }).Methods("GET")
+    router.HandleFunc("/api/v1/users/{id}", func(res http.ResponseWriter, req *http.Request) {
+        handlers.BasicAuth(handlers.GetUser)(res, req, dbmap)
+    }).Methods("GET")
+    router.HandleFunc("/api/v1/users", func(res http.ResponseWriter, req *http.Request) {
+        handlers.BasicAuth(handlers.PostUser)(res, req, dbmap)
+    }).Methods("POST")
+    router.HandleFunc("/api/v1/users/{id}", func(res http.ResponseWriter, req *http.Request) {
+        handlers.BasicAuth(handlers.DeleteUser)(res, req, dbmap)
+    }).Methods("DELETE")
+
     // router.HandleFunc("/api/v1/users", func(res http.ResponseWriter, req *http.Request) {
     //     handlers.BasicAuth(handlers.PostUser(res, req, dbmap)
     // }).Methods("POST")
     // router.HandleFunc("/api/v1/users/{id}", func(res http.ResponseWriter, req *http.Request) {
     //     handlers.PatchUser(res, req, dbmap)
     // }).Methods("PATCH")
-    router.HandleFunc("/api/v1/users", func(res http.ResponseWriter, req *http.Request) {
-        //handlers.GetUsers(res, req, dbmap)
-        handlers.BasicAuth(handlers.GetUsers)(res, req, dbmap)
-    }).Methods("GET")
     // // general
-    // router.HandleFunc("/api/v1/{resource}/{id}", func(res http.ResponseWriter, req *http.Request) {
-    //     var i models.User
-    //     handlers.GetItem(i, res, req, dbmap)
-    // }).Methods("GET")
+    
     // // general
-    // router.HandleFunc("/api/v1/users/{id}", func(res http.ResponseWriter, req *http.Request) {
-    //     handlers.DeleteItem("users", res, req, dbmap)
-    // }).Methods("DELETE")
+    
     
 
     

@@ -14,8 +14,13 @@ type handler func(res http.ResponseWriter, req *http.Request, dbmap *gorp.DbMap)
  
 func BasicAuth(pass handler) handler {
     return func(res http.ResponseWriter, req *http.Request, dbmap *gorp.DbMap) {
- 
-        auth := strings.SplitN(req.Header["Authorization"][0], " ", 2)
+ 		header := req.Header.Get("Authorization") //req.Header["Authorization"]
+ 		if header == "" {
+ 			http.Error(res, "bad syntax", http.StatusBadRequest)
+            return
+ 		}
+
+        auth := strings.SplitN(header, " ", 2)
  
         if len(auth) != 2 || auth[0] != "Basic" {
             http.Error(res, "bad syntax", http.StatusBadRequest)
@@ -33,7 +38,7 @@ func BasicAuth(pass handler) handler {
         pass(res, req, dbmap)
     }
 }
- 
+
 func Validate(username, password string) bool {
     if username == "username" && password == "password" {
         return true
