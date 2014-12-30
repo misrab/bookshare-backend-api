@@ -10,12 +10,20 @@ import (
 )
 
 /*
-	Users Handlers:
-	- GET many
-	- GET one
-	- PATCH one
-	- POST one
-	- DELETE one
+    Curl test example
+
+    curl -u username:password localhost:8080/api/v1/users --data "email=aaa@aaa.com&password=123"
+
+    curl -u username:password localhost:8080/api/v1/users/1
+
+    curl -u username:password localhost:8080/api/v1/users/1 --request PATCH --data "email=bbb@bbb.com"
+
+    curl -u username:password localhost:8080/api/v1/users
+
+    curl -u username:password localhost:8080/api/v1/users/1 --request DELETE
+
+    // get again to check
+    curl -u username:password localhost:8080/api/v1/users
 */
 
 
@@ -35,7 +43,7 @@ func GetUsers(res http.ResponseWriter, req *http.Request, dbmap *gorp.DbMap) {
 
 func GetUser(res http.ResponseWriter, req *http.Request, dbmap *gorp.DbMap) {
 	var item models.User
-	result, err := GetById(item, req, dbmap)
+	result, err := getById(item, req, dbmap)
 	if err != nil { 
 		Respond(nil, err, res)
 		return
@@ -44,7 +52,8 @@ func GetUser(res http.ResponseWriter, req *http.Request, dbmap *gorp.DbMap) {
 }
 
 
-
+// For another model without hooks (i.e. password->hash), 
+// would likely want to use parseFormValues.
 func PostUser(res http.ResponseWriter, req *http.Request, dbmap *gorp.DbMap) {
 	item := new(models.User)
 	item.Email = req.FormValue("email")
@@ -55,6 +64,29 @@ func PostUser(res http.ResponseWriter, req *http.Request, dbmap *gorp.DbMap) {
 	Respond(item, err, res)
 }
 
+
+func PatchUser(res http.ResponseWriter, req *http.Request, dbmap *gorp.DbMap) {
+	var item models.User
+	modelname := "users"
+
+	id, _ := getId(req)
+	query := "select * from " + modelname + " where id=$1"
+	err := dbmap.SelectOne(&item, query, id)
+	if err != nil {
+		Respond(nil, err, res)
+		return
+	}
+
+	err = parseFormValues(&item, req)
+	if err != nil { 
+		Respond(nil, err, res)
+		return
+	}
+
+	_, err2 := dbmap.Update(&item)
+	Respond(item, err2, res)
+	
+}
 
 func DeleteUser(res http.ResponseWriter, req *http.Request, dbmap *gorp.DbMap) {
 	DeleteItem("users", res, req, dbmap)

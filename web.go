@@ -13,7 +13,6 @@ import(
 
 
 
-
 func main() {
     router := mux.NewRouter()
     dbmap := models.SetupDB()
@@ -34,15 +33,16 @@ func main() {
         handlers.BasicAuth(handlers.PostUser)(res, req, dbmap)
     }).Methods("POST")
     router.HandleFunc("/api/v1/users/{id}", func(res http.ResponseWriter, req *http.Request) {
+        handlers.BasicAuth(handlers.PatchUser)(res, req, dbmap)
+    }).Methods("PATCH")
+    router.HandleFunc("/api/v1/users/{id}", func(res http.ResponseWriter, req *http.Request) {
         handlers.BasicAuth(handlers.DeleteUser)(res, req, dbmap)
     }).Methods("DELETE")
 
     // router.HandleFunc("/api/v1/users", func(res http.ResponseWriter, req *http.Request) {
     //     handlers.BasicAuth(handlers.PostUser(res, req, dbmap)
     // }).Methods("POST")
-    // router.HandleFunc("/api/v1/users/{id}", func(res http.ResponseWriter, req *http.Request) {
-    //     handlers.PatchUser(res, req, dbmap)
-    // }).Methods("PATCH")
+    
     // // general
     
     // // general
