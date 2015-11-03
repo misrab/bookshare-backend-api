@@ -7,8 +7,8 @@ import(
 
 	"github.com/gorilla/mux"
 
-	"github.com/misrab/goapi/handlers"
-    "github.com/misrab/goapi/models"
+	"github.com/misrab/bookshare-backend-api/handlers"
+    "github.com/misrab/bookshare-backend-api/models"
 )
 
 
