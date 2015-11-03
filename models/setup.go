@@ -16,8 +16,13 @@ import (
 func SetupDB() *gorp.DbMap {
     // get environment
     env := os.Getenv("ENV")
-    println('env is ' + env)
+    if (env != "development" &&
+        env != "staging" &&
+        env != "production" ) {
+        env = "production" // pick most conservative by default
+    }
 
+    
     db := pgConnect()
 
     // construct a gorp DbMap
@@ -37,18 +42,22 @@ func SetupDB() *gorp.DbMap {
 
 
     // drop all tables for testing
-    log.Println("DROPPING TABLES!")
-    err1 := dbmap.DropTablesIfExists()
-    if err1 != nil { panic(err1) }
+    if env == "development" {
+        log.Println("DROPPING TABLES!")
+        err := dbmap.DropTablesIfExists()
+        if err != nil { panic(err) }
 
-    err2 := dbmap.CreateTablesIfNotExists()
+        // set logging for development
+        dbmap.TraceOn("[gorp]", log.New(os.Stdout, "myapp:", log.Lmicroseconds)) 
+    }
+  
+
+    err := dbmap.CreateTablesIfNotExists()
     // PanicIf(err2)
-    if err2 != nil {
-        panic(err2)
+    if err != nil {
+        panic(err)
     }
 
-    // set logging for development
-    dbmap.TraceOn("[gorp]", log.New(os.Stdout, "myapp:", log.Lmicroseconds)) 
     
     return dbmap
 }
