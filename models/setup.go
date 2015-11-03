@@ -14,6 +14,10 @@ import (
 
 //func SetupDB() *sql.DB {
 func SetupDB() *gorp.DbMap {
+    // get environment
+    env := os.Getenv("ENV")
+    println('env is ' + env)
+
     db := pgConnect()
 
     // construct a gorp DbMap
@@ -30,7 +34,7 @@ func SetupDB() *gorp.DbMap {
     // dbmap.AddTableWithName(Quest{}, "quests").SetKeys(true, "Id")
     // dbmap.AddTableWithName(Discussion{}, "discussions").SetKeys(true, "Id")
     // dbmap.AddTableWithName(Comment{}, "comments").SetKeys(true, "Id")
-    
+
 
     // drop all tables for testing
     log.Println("DROPPING TABLES!")
