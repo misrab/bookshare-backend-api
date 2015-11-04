@@ -37,8 +37,8 @@ func SetupDB() *gorp.DbMap {
     // specifying that the Id property is an auto incrementing PK
     dbmap.AddTableWithName(User{}, "users").SetKeys(true, "Id").ColMap("Email").SetUnique(true)
     dbmap.AddTableWithName(Book{}, "books").SetKeys(true, "Id") // .ColMap("Title").SetUnique(true)
-    dbmap.AddTableWithName(UserBook{}, "user_books").SetUniqueTogether("user_id", "book_id") // join table
-    // dbmap.AddTableWithName(UserTopic{}, "user_quests")
+    dbmap.AddTableWithName(UserBook{}, "users_books").SetUniqueTogether("user_id", "book_id") // join table
+    // dbmap.AddTableWithName(UserTopic{}, "user_quests") AddIndex("UserBooksIndex", "Btree", []string{"user_id", "book_id"}).SetUnique(true) //
 
     // dbmap.AddTableWithName(Resource{}, "resources").SetKeys(true, "Id")
     // dbmap.AddTableWithName(Quest{}, "quests").SetKeys(true, "Id")
