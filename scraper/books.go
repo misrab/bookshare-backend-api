@@ -1,10 +1,27 @@
 package scraper
 
 import (
-	"bufio"
-	"fmt"
-	"log"
-	"os"
+    // "bufio"
+    "fmt"
+    //    "strings"
+    //    "io"
+    // "log"
+    // "os"
+    // "time"
+
+
+
+    "encoding/json"
+
+
+    // "database/sql"
+    // _ "github.com/lib/pq"
+    // "github.com/coopernurse/gorp"
+
+
+    "github.com/misrab/bookshare-backend-api/models"
+    
+    "github.com/misrab/goutils"
 )
 
 
@@ -20,24 +37,73 @@ const (
 func GetBooks() {
 	println("getting books")
 
-	readDump("./data/dumps_short_works.txt")
+
+    filepath := "./data/dumps_short_works.txt"
+	// readDump(filepat)
+
+
+    // connection to database
+    // dbmap := models.ConnectDB()
+    dbmap := models.SetupDB()
+    
+    // TODO get dump and decompress
+
+    // read from dump
+    c := make(chan []string)
+
+    go utils.ReadCsv(filepath, c, true, '\t')
+
+    for record := range c {
+        
+
+        book := new(models.Book)
+
+        // TODO make a suitable object
+        json.Unmarshal([]byte(record[4]), book)
+        fmt.Printf("%v\n", book)
+
+        // TODO add to database
+        // err := 
+        dbmap.Insert(book)
+
+
+        // TEMP
+        // return
+
+    }
+
+    // TODO resolve authors or store them
+
+
+    
 }
 
 
+
+
+
 func readDump(filepath string) {
-	file, err := os.Open(filepath)
-    if err != nil {
-        log.Fatal(err)
-    }
-    defer file.Close()
+    c := make(chan []string)
 
-    scanner := bufio.NewScanner(file)
-    for scanner.Scan() {
-        fmt.Println(scanner.Text())
-        return
+    go utils.ReadCsv(filepath, c, true, '\t')
+
+    for record := range c {
+        fmt.Printf("%v\n", record)
     }
 
-    if err := scanner.Err(); err != nil {
-        log.Fatal(err)
-    }
+	// file, err := os.Open(filepath)
+ //    if err != nil {
+ //        log.Fatal(err)
+ //    }
+ //    defer file.Close()
+
+ //    scanner := bufio.NewScanner(file)
+ //    for scanner.Scan() {
+ //        fmt.Println(scanner.Text())
+ //        return
+ //    }
+
+ //    if err := scanner.Err(); err != nil {
+ //        log.Fatal(err)
+ //    }
 }

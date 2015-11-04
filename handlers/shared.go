@@ -11,7 +11,7 @@ import (
 	// "encoding/json"
 
 	_ "github.com/lib/pq"
-	"github.com/coopernurse/gorp"
+	"github.com/go-gorp/gorp"
 	
 	"github.com/gorilla/mux"
 	// "github.com/gorilla/schema"

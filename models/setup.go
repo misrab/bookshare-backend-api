@@ -7,10 +7,15 @@ import (
     "regexp"
 
     "database/sql"
-
     _ "github.com/lib/pq"
-    "github.com/coopernurse/gorp"
+    "github.com/go-gorp/gorp"
 )
+
+func ConnectDB() *gorp.DbMap {
+    db := pgConnect()
+    return &gorp.DbMap{Db: db, Dialect: gorp.PostgresDialect{}}
+}
+
 
 //func SetupDB() *sql.DB {
 func SetupDB() *gorp.DbMap {
@@ -31,8 +36,8 @@ func SetupDB() *gorp.DbMap {
     // add a table, setting the table name to 'posts' and
     // specifying that the Id property is an auto incrementing PK
     dbmap.AddTableWithName(User{}, "users").SetKeys(true, "Id").ColMap("Email").SetUnique(true)
-    // dbmap.AddTableWithName(Topic{}, "topics").SetKeys(true, "Id")
-    // dbmap.AddTableWithName(UserTopic{}, "user_topics")
+    dbmap.AddTableWithName(Book{}, "books").SetKeys(true, "Id") // .ColMap("Title").SetUnique(true)
+    dbmap.AddTableWithName(UserBook{}, "user_books").SetUniqueTogether("user_id", "book_id") // join table
     // dbmap.AddTableWithName(UserTopic{}, "user_quests")
 
     // dbmap.AddTableWithName(Resource{}, "resources").SetKeys(true, "Id")

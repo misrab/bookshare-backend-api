@@ -4,9 +4,9 @@ import (
 	"net/http"
 
 	_ "github.com/lib/pq"
-	"github.com/coopernurse/gorp"
+	"github.com/go-gorp/gorp"
 
-	"github.com/misrab/goapi/models"
+	"github.com/misrab/bookshare-backend-api/models"
 )
 
 /*
@@ -30,7 +30,7 @@ import (
 
 func GetUsers(res http.ResponseWriter, req *http.Request, dbmap *gorp.DbMap) {
 	var items []models.User
-	query := "select * from users order by updated"
+	query := "select * from users order by updatedAt"
 	_, err := dbmap.Select(&items, query)
 	if err != nil { 
 		Respond(nil, err, res)

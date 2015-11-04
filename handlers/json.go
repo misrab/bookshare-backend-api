@@ -27,11 +27,14 @@ func SetHeaders(res http.ResponseWriter, code int) {
   		res.Header().Set(k, v)
   	}
   	res.Header().Set("Status", http.StatusText(code))
-	res.Header().Set("Date", time.Now().String())	
+		res.Header().Set("Date", time.Now().String())	
 }
 
 
 func Respond(i interface{}, err error, res http.ResponseWriter) {
+	// res.Write([]byte("fds"))
+	// return
+
 	if err != nil {
 		SetHeaders(res, 400)
 		http.Error(res, err.Error(), http.StatusInternalServerError)

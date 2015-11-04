@@ -5,14 +5,14 @@ import (
     "time"
 
     "code.google.com/p/go.crypto/bcrypt"
-    "github.com/coopernurse/gorp"
+    "github.com/go-gorp/gorp"
 )
 
 
 
 type User struct {
 	Id       	int64 `db:"id"`
-    Created  	int64 
+    Created  	int64
     Updated  	int64
 
     Email  		string `schema:"email",json:"email",db:"email"`
