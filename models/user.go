@@ -12,15 +12,13 @@ import (
 
 type User struct {
 	Id       	int64 `db:"id"`
-    Created  	int64
-    Updated  	int64
+    
 
-    Email  		string `schema:"email",json:"email",db:"email"`
-    Hash 		string
+    Email  		string `json:"email"` //`schema:"email",json:"email",db:"email"`
+    Hash 		string `json:"hash"`
 
-    // IsConsumer    bool
-
-    // Rating      uint8
+    CreatedAt int64 `db:"created_at"`
+    UpdatedAt int64 `db:"updated_at"`
 }
 
 
@@ -46,12 +44,12 @@ func (user *User) ComparePassword(password string) error {
 
 // implement the PreInsert and PreUpdate hooks
 func (i *User) PreInsert(s gorp.SqlExecutor) error {
-    i.Created = time.Now().UnixNano()
-    i.Updated = i.Created
+    i.CreatedAt = time.Now().UnixNano()
+    i.UpdatedAt = i.CreatedAt
     return nil
 }
 
 func (i *User) PreUpdate(s gorp.SqlExecutor) error {
-    i.Updated = time.Now().UnixNano()
+    i.UpdatedAt = time.Now().UnixNano()
     return nil
 }

@@ -36,14 +36,10 @@ func SetupDB() *gorp.DbMap {
     // add a table, setting the table name to 'posts' and
     // specifying that the Id property is an auto incrementing PK
     dbmap.AddTableWithName(User{}, "users").SetKeys(true, "Id").ColMap("Email").SetUnique(true)
-    dbmap.AddTableWithName(Book{}, "books").SetKeys(true, "Id") // .ColMap("Title").SetUnique(true)
-    dbmap.AddTableWithName(UserBook{}, "users_books").SetUniqueTogether("user_id", "book_id") // join table
+    dbmap.AddTableWithName(Reading{}, "readings").SetKeys(true, "Id") // .ColMap("Title").SetUnique(true)
+    dbmap.AddTableWithName(UserReading{}, "users_readings").SetUniqueTogether("user_id", "reading_id") // join table
     // dbmap.AddTableWithName(UserTopic{}, "user_quests") AddIndex("UserBooksIndex", "Btree", []string{"user_id", "book_id"}).SetUnique(true) //
 
-    // dbmap.AddTableWithName(Resource{}, "resources").SetKeys(true, "Id")
-    // dbmap.AddTableWithName(Quest{}, "quests").SetKeys(true, "Id")
-    // dbmap.AddTableWithName(Discussion{}, "discussions").SetKeys(true, "Id")
-    // dbmap.AddTableWithName(Comment{}, "comments").SetKeys(true, "Id")
 
 
     // drop all tables for testing
@@ -58,12 +54,10 @@ func SetupDB() *gorp.DbMap {
   
 
     err := dbmap.CreateTablesIfNotExists()
-    // PanicIf(err2)
     if err != nil {
         panic(err)
     }
 
-    
     return dbmap
 }
 

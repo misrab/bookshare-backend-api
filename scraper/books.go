@@ -56,7 +56,7 @@ func GetBooks() {
     for record := range c {
         
 
-        book := new(models.Book)
+        book := new(models.Reading)
 
         // TODO make a suitable object
         json.Unmarshal([]byte(record[4]), book)

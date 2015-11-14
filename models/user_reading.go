@@ -9,11 +9,11 @@ import (
 
 
 // join table
-type UserBook struct {
+type UserReading struct {
 	
 
     UserId int64 `db:"user_id"`
-    BookId int64 `db:"book_id"`
+    ReadingId int64 `db:"reading_id"`
 
 
     // Fields found so far
@@ -41,13 +41,13 @@ type UserBook struct {
  */
 
 // implement the PreInsert and PreUpdate hooks
-func (i *UserBook) PreInsert(s gorp.SqlExecutor) error {
+func (i *UserReading) PreInsert(s gorp.SqlExecutor) error {
     i.CreatedAt = time.Now().UnixNano()
     i.UpdatedAt = i.CreatedAt
     return nil
 }
 
-func (i *UserBook) PreUpdate(s gorp.SqlExecutor) error {
+func (i *UserReading) PreUpdate(s gorp.SqlExecutor) error {
     i.UpdatedAt = time.Now().UnixNano()
     return nil
 }

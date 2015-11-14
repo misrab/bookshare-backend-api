@@ -9,10 +9,11 @@ import (
 
 
 
-type Book struct {
+type Reading struct {
 	
 
     Title string `json:"title"`
+
 
 
 
@@ -41,13 +42,13 @@ type Book struct {
  */
 
 // implement the PreInsert and PreUpdate hooks
-func (i *Book) PreInsert(s gorp.SqlExecutor) error {
+func (i *Reading) PreInsert(s gorp.SqlExecutor) error {
     i.CreatedAt = time.Now().UnixNano()
     i.UpdatedAt = i.CreatedAt
     return nil
 }
 
-func (i *Book) PreUpdate(s gorp.SqlExecutor) error {
+func (i *Reading) PreUpdate(s gorp.SqlExecutor) error {
     i.UpdatedAt = time.Now().UnixNano()
     return nil
 }

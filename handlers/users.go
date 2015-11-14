@@ -1,10 +1,16 @@
 package handlers
 
 import (
+	"errors"
+	// "fmt"
+
 	"net/http"
+	"encoding/json"
 
 	_ "github.com/lib/pq"
 	"github.com/go-gorp/gorp"
+
+	// "github.com/gorilla/mux"
 
 	"github.com/misrab/bookshare-backend-api/models"
 )
@@ -27,6 +33,12 @@ import (
 */
 
 
+type UserWrapper struct {
+	Email string `json:"email"`
+	Password string `json:"password"`
+}
+
+
 
 func GetUsers(res http.ResponseWriter, req *http.Request, dbmap *gorp.DbMap) {
 	var items []models.User
@@ -41,6 +53,31 @@ func GetUsers(res http.ResponseWriter, req *http.Request, dbmap *gorp.DbMap) {
 }
 
 
+func GetCurrentUser(res http.ResponseWriter, req *http.Request, dbmap *gorp.DbMap) {
+	var item models.User
+
+	// first decode header
+	username, _, httpCode := DecodeAuthHeader(req)
+	if httpCode != http.StatusOK {
+		// errors.New("Invalid authorization header")
+		Respond(nil, errors.New("Invalid authorization header"), res)
+	}
+
+	// get said user
+	err := dbmap.SelectOne(&item, "select * from users where email=$1", username)
+	if err != nil { 
+		// err
+		Respond(nil, err, res)
+		return
+	}
+
+	// check password TODO
+
+
+	Respond(item, nil, res)
+}
+
+
 func GetUser(res http.ResponseWriter, req *http.Request, dbmap *gorp.DbMap) {
 	var item models.User
 	result, err := getById(item, req, dbmap)
@@ -51,16 +88,68 @@ func GetUser(res http.ResponseWriter, req *http.Request, dbmap *gorp.DbMap) {
 	Respond(result, err, res)
 }
 
+func LoginUser(res http.ResponseWriter, req *http.Request, dbmap *gorp.DbMap) {
+	// get email and password
+	item := new(models.User)
+	// vars := mux.Vars(req)
+	// email := vars["email"]
+	// password := vars["password"]
+
+	var userWrapper UserWrapper
+	var err error
+	
+	err = json.NewDecoder(req.Body).Decode(&userWrapper)
+	if err != nil {
+		Respond(nil, err, res)
+		return
+	}
+
+	// get the user
+	err = dbmap.SelectOne(&item, "select * from users where email=$1", userWrapper.Email)
+	if err != nil {
+		Respond(nil, err, res)
+		return
+	}
+
+	// check the password
+	err = item.ComparePassword(userWrapper.Password)
+	if err != nil {
+		Respond(nil, err, res)
+		return
+	}
+
+	Respond(item, nil, res)
+}
+
+
+
 
 // For another model without hooks (i.e. password->hash), 
 // would likely want to use parseFormValues.
 func PostUser(res http.ResponseWriter, req *http.Request, dbmap *gorp.DbMap) {
 	item := new(models.User)
-	item.Email = req.FormValue("email")
-	item.SetPassword(req.FormValue("password"))
+
+
+	var userWrapper UserWrapper
+	var err error
+	
+	err = json.NewDecoder(req.Body).Decode(&userWrapper)
+	if err != nil {
+		Respond(nil, err, res)
+		return
+	}
+
+
+	email := userWrapper.Email
+	password := userWrapper.Password
+
+	// set new object for insert
+	item.Email = email
+	item.SetPassword(password)
+
 
 	// save user
-	err := dbmap.Insert(item)
+	err = dbmap.Insert(item)
 	Respond(item, err, res)
 }
 
