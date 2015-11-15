@@ -19,6 +19,7 @@ var (
 		"Access-Control-Allow-Origin": "*",
 		"Access-Control-Allow-Headers": "Origin,Content-Type,Accept,Authorization",
 		"Content-Type": "application/json",
+		"Access-Control-Allow-Methods": "GET,PATCH,PUT,POST,DELETE",
 	}
 )
 

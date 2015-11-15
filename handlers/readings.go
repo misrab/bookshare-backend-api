@@ -35,11 +35,11 @@ func GetReadingsAutocomplete(res http.ResponseWriter, req *http.Request, dbmap *
 	// vars := mux.Vars(req)
 	// title := vars["title"]
 
-	title := req.FormValue("title")
+	title := req.FormValue("title") + "%"
 
 
-	query := "select * from readings where title ILIKE '"+title+"%' order by updated_at limit 10"
-	_, err := dbmap.Select(&items, query)
+	// query := "select * from readings where title ILIKE '"+title+"%' order by updated_at limit 10"
+	_, err := dbmap.Select(&items, "select * from readings where title ILIKE $1 order by updated_at limit 10", title)
 	if err != nil { 
 		Respond(nil, err, res)
 		return

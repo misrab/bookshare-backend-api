@@ -33,10 +33,42 @@ import (
 */
 
 
+/*
+	Non-handlers
+*/
+
 type UserWrapper struct {
 	Email string `json:"email"`
 	Password string `json:"password"`
 }
+
+type UserAuthWrapper struct {
+	Email string `json:"email"`
+	Hash string `json:"Hash"`
+}
+
+
+// decodes user creds from auth header and tries to 
+// find such user. If no valid match returns nil.
+func GetUserFromAuth(req *http.Request, dbmap *gorp.DbMap) (error, *models.User) {
+	var item models.User
+	username, hash, httpCode := DecodeAuthHeader(req)
+
+	if httpCode != http.StatusOK { return errors.New("Invalid auth"), nil }
+
+	// get said user
+	err := dbmap.SelectOne(&item, "select * from users where email=$1", username)
+	// check hash
+	if err != nil || item.Hash != hash { return err, nil }
+
+	return nil, &item
+}
+
+
+
+/*
+	Handlers
+*/
 
 
 
@@ -54,27 +86,28 @@ func GetUsers(res http.ResponseWriter, req *http.Request, dbmap *gorp.DbMap) {
 
 
 func GetCurrentUser(res http.ResponseWriter, req *http.Request, dbmap *gorp.DbMap) {
-	var item models.User
+	// var item models.User
 
-	// first decode header
-	username, _, httpCode := DecodeAuthHeader(req)
-	if httpCode != http.StatusOK {
-		// errors.New("Invalid authorization header")
-		Respond(nil, errors.New("Invalid authorization header"), res)
-	}
+	// // first decode header
+	// username, _, httpCode := DecodeAuthHeader(req)
+	// if httpCode != http.StatusOK {
+	// 	// errors.New("Invalid authorization header")
+	// 	Respond(nil, errors.New("Invalid authorization header"), res)
+	// }
 
-	// get said user
-	err := dbmap.SelectOne(&item, "select * from users where email=$1", username)
-	if err != nil { 
-		// err
-		Respond(nil, err, res)
-		return
-	}
+	// // get said user
+	// err := dbmap.SelectOne(&item, "select * from users where email=$1", username)
+	// if err != nil { 
+	// 	// err
+	// 	Respond(nil, err, res)
+	// 	return
+	// }
 
 	// check password TODO
+	err, user := GetUserFromAuth(req, dbmap)
 
 
-	Respond(item, nil, res)
+	Respond(user, err, res)
 }
 
 

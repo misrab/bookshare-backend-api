@@ -9,25 +9,15 @@ import (
 
 
 
-type Reading struct {
+type Post struct {
 	
 
-    Title string `json:"title"`
+    Comment string `json:"comment"`
 
+    // Associations
+    UserId int64 `json:"user_id" db:"user_id"`
+    ReadingId int64 `json:"reading_id" db:"reading_id"`
 
-
-
-    // Fields found so far
-    // subtitle
-    // covers
-    // latest_revision, revision
-
-    // subject_times
-    // subjects
-
-
-
-    // TODO Authors - likely a join table
 
     // Meta
     Id int64 `db:"id" json:"id"`
@@ -42,13 +32,13 @@ type Reading struct {
  */
 
 // implement the PreInsert and PreUpdate hooks
-func (i *Reading) PreInsert(s gorp.SqlExecutor) error {
+func (i *Post) PreInsert(s gorp.SqlExecutor) error {
     i.CreatedAt = time.Now().UnixNano()
     i.UpdatedAt = i.CreatedAt
     return nil
 }
 
-func (i *Reading) PreUpdate(s gorp.SqlExecutor) error {
+func (i *Post) PreUpdate(s gorp.SqlExecutor) error {
     i.UpdatedAt = time.Now().UnixNano()
     return nil
 }

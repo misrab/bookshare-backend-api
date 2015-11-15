@@ -43,20 +43,17 @@ func main() {
 
     // CORS preflight request
     router.HandleFunc("/api/v1/{*}", func(res http.ResponseWriter, req *http.Request) {
-    // handlers.Respond(nil, nil, res)
-        // handlers.SetHeaders(res, 200)
-        // res.WriteHeader(200)
         handlers.Respond(nil, nil, res)
-    // res.Write(nil)
     }).Methods("OPTIONS")
-    // router.HandleFunc("/api/v1/users", func(res http.ResponseWriter, req *http.Request) {
-    // // handlers.Respond(nil, nil, res)
-    //     // handlers.SetHeaders(res, 200)
-    //     // res.WriteHeader(200)
-    //     handlers.Respond(nil, nil, res)
-    // // res.Write(nil)
-    // }).Methods("OPTIONS")
-
+    router.HandleFunc("/api/v1/{*}/{*}", func(res http.ResponseWriter, req *http.Request) {
+        handlers.Respond(nil, nil, res)
+    }).Methods("OPTIONS")
+    router.HandleFunc("/api/v1/{*}/{*}/{*}", func(res http.ResponseWriter, req *http.Request) {
+        handlers.Respond(nil, nil, res)
+    }).Methods("OPTIONS")
+    router.HandleFunc("/api/v1/{*}/{*}/{*}/{*}", func(res http.ResponseWriter, req *http.Request) {
+        handlers.Respond(nil, nil, res)
+    }).Methods("OPTIONS")
 
     // User
     router.HandleFunc("/api/v1/users", func(res http.ResponseWriter, req *http.Request) {
@@ -114,12 +111,34 @@ func main() {
     router.HandleFunc("/api/v1/readings_autocomplete", func(res http.ResponseWriter, req *http.Request) {
         handlers.BasicAuth(handlers.GetReadingsAutocomplete)(res, req, dbmap)
     }).Methods("GET")
+
+
+    // Post i.e. comment
+    router.HandleFunc("/api/v1/feed/posts", func(res http.ResponseWriter, req *http.Request) {
+        handlers.BasicAuth(handlers.GetFeedPosts)(res, req, dbmap)
+    }).Methods("GET")
+    router.HandleFunc("/api/v1/posts", func(res http.ResponseWriter, req *http.Request) {
+        handlers.BasicAuth(handlers.GetPosts)(res, req, dbmap)
+    }).Methods("GET")
+    router.HandleFunc("/api/v1/posts/{id}", func(res http.ResponseWriter, req *http.Request) {
+        handlers.BasicAuth(handlers.GetPost)(res, req, dbmap)
+    }).Methods("GET")
+    router.HandleFunc("/api/v1/posts", func(res http.ResponseWriter, req *http.Request) {
+        handlers.BasicAuth(handlers.PostPost)(res, req, dbmap)
+    }).Methods("POST")
+    router.HandleFunc("/api/v1/posts/{id}", func(res http.ResponseWriter, req *http.Request) {
+        handlers.BasicAuth(handlers.PatchPost)(res, req, dbmap)
+    }).Methods("PATCH")
+    router.HandleFunc("/api/v1/posts/{id}", func(res http.ResponseWriter, req *http.Request) {
+        handlers.BasicAuth(handlers.DeletePost)(res, req, dbmap)
+    }).Methods("DELETE")
+
     
 
     // User-Reading Association
-    // router.HandleFunc("/api/v1/users_Readings", func(res http.ResponseWriter, req *http.Request) {
-    //     handlers.BasicAuth(handlers.GetReadings)(res, req, dbmap)
-    // }).Methods("GET")
+    router.HandleFunc("/api/v1/users/{id}/readings", func(res http.ResponseWriter, req *http.Request) {
+        handlers.BasicAuth(handlers.GetUserReadings)(res, req, dbmap)
+    }).Methods("GET")
     // router.HandleFunc("/api/v1/users_Readings/{id}", func(res http.ResponseWriter, req *http.Request) {
     //     handlers.BasicAuth(handlers.GetReading)(res, req, dbmap)
     // }).Methods("GET")
@@ -129,6 +148,8 @@ func main() {
     // router.HandleFunc("/api/v1/Readings/{id}", func(res http.ResponseWriter, req *http.Request) {
     //     handlers.BasicAuth(handlers.PatchReading)(res, req, dbmap)
     // }).Methods("PATCH")
+    // id is the reading id
+    // user is from auth header
     router.HandleFunc("/api/v1/users_readings/{id}", func(res http.ResponseWriter, req *http.Request) {
         handlers.BasicAuth(handlers.DeleteUserReading)(res, req, dbmap)
     }).Methods("DELETE")

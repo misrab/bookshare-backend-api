@@ -1,10 +1,12 @@
 package handlers
 
 import (
+	// "fmt"
 	"errors"
 	"strconv"
 
 	"net/http"
+	"encoding/json"
 
 	_ "github.com/lib/pq"
 	"github.com/go-gorp/gorp"
@@ -48,46 +50,60 @@ import (
 // }
 
 
-// func GetUserReading(res http.ResponseWriter, req *http.Request, dbmap *gorp.DbMap) {
-// 	var item models.UserReading
-// 	result, err := getById(item, req, dbmap)
-// 	if err != nil { 
-// 		Respond(nil, err, res)
-// 		return
-// 	}
-// 	Respond(result, err, res)
-// }
+// get the actual readings
+func GetUserReadings(res http.ResponseWriter, req *http.Request, dbmap *gorp.DbMap) {
+	var readings []models.Reading
+
+	vars := mux.Vars(req)
+	userId := vars["id"]
+
+	_, err := dbmap.Select(&readings, "select * from readings where id in (select reading_id as id from users_readings where user_id = $1) order by updated_at desc", userId)
+	
+	Respond(readings, err, res)
+}
 
 
 
-// func associateUserReading(userId, ReadingId int64) error {
 
-// }
 
 // For another model without hooks (i.e. password->hash), 
 // would likely want to use parseFormValues.
 func PostUserReading(res http.ResponseWriter, req *http.Request, dbmap *gorp.DbMap) {
 	item := new(models.UserReading)
-	var err error
 
-	item.UserId, err = Atoi64(req.FormValue("user_id"))
+
+	// get the user from auth
+	err, user := GetUserFromAuth(req, dbmap)
+	if err != nil { 
+		Respond(nil, err, res)
+		return
+	}
+	item.UserId = user.Id
+
+
+	// TOOD if no reading id and article, create new article reading
+
+	wrapper := struct{
+		ReadingId int64 `json:"reading_id"`
+	}{}
+	err = json.NewDecoder(req.Body).Decode(&wrapper)
 	if err != nil { 
 		Respond(item, err, res)
 		return
 	}
-	item.ReadingId, err = Atoi64(req.FormValue("reading_id"))
-	if err != nil { 
-		Respond(item, err, res)
-		return
-	}
+	item.ReadingId = wrapper.ReadingId
 
-	// item.SetPassword(req.FormValue("password"))
+	// item.ReadingId, err = Atoi64(req.Body["reading_id"])
+	// if err != nil { 
+	// 	Respond(item, err, res)
+	// 	return
+	// }
+
+	// hmmm
 	if (item.UserId == 0 || item.ReadingId == 0) {
 		Respond(item, errors.New("Please provide a user_id and reading_id"), res)
 		return
 	}
-
-	// TODO verify they're valid / not already associated
 
 
 	// save UserReading
@@ -144,12 +160,23 @@ func StringsToInts64(items ...string) ([]int64, error) {
 // 	Respond(nil, err, res)
 // }
 
+// user from auth
 func DeleteUserReading(res http.ResponseWriter, req *http.Request, dbmap *gorp.DbMap) {
+	println("deleting user readgns")
+
+	err, user := GetUserFromAuth(req, dbmap)
+	if err != nil {
+		Respond(nil, err, res)
+		return
+	}
+
+	// fmt.Printf("%v\n", user)
+	user_id := strconv.FormatInt(user.Id, 10)
 	vars := mux.Vars(req)
-	id := vars["user_id"]
-	modelname := "readings"
-	query := "delete from " + modelname + " where id=" + id
-	_, err := dbmap.Exec(query)
+	reading_id := vars["id"]
+
+	query := "delete from users_readings where user_id=" + user_id + " and reading_id=" + reading_id
+	_, err = dbmap.Exec(query)
 
 	Respond(nil, err, res)
 }

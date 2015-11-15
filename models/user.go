@@ -11,14 +11,14 @@ import (
 
 
 type User struct {
-	Id       	int64 `db:"id"`
+	Id       	int64 `db:"id" json:"id"`
     
 
     Email  		string `json:"email"` //`schema:"email",json:"email",db:"email"`
     Hash 		string `json:"hash"`
 
-    CreatedAt int64 `db:"created_at"`
-    UpdatedAt int64 `db:"updated_at"`
+    CreatedAt int64 `db:"created_at" json:"created_at"`
+    UpdatedAt int64 `db:"updated_at" json:"updated_at"`
 }
 
 
