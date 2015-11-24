@@ -12,6 +12,12 @@ import (
 
     "github.com/misrab/bookshare-backend-api/models"
 )
+
+const (
+    TOKEN = "lalala"
+)
+
+
  
 type handler func(res http.ResponseWriter, req *http.Request, dbmap *gorp.DbMap)
  

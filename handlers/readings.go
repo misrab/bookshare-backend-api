@@ -7,6 +7,8 @@ import (
 	"github.com/go-gorp/gorp"
 
 	// "github.com/gorilla/mux"
+	"github.com/misrab/goutils"
+
 
 	"github.com/misrab/bookshare-backend-api/models"
 )
@@ -29,11 +31,19 @@ import (
 */
 
 
+// e.g. curl localhost:8000/api/v1/link_preview?url=https%3A%2F%2Fgodoc.org%2Fgolang.org%2Fx%2Fnet%2Fhtml&token=
 func GetLinkPreview(res http.ResponseWriter, req *http.Request, dbmap *gorp.DbMap) {
 	url := req.FormValue("url")
 
 	// get the url
+	preview, err := utils.ParseLink(url)
 	
+	if err != nil { 
+		Respond(nil, err, res)
+		return
+	}
+
+	Respond(preview, err, res)
 
 }
 
