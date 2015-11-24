@@ -92,6 +92,10 @@ func main() {
 
 
     // Reading
+    router.HandleFunc("/api/v1/link_preview", func(res http.ResponseWriter, req *http.Request) {
+        handlers.BasicAuth(handlers.GetLinkPreview)(res, req, dbmap)
+    }).Methods("GET")
+
     router.HandleFunc("/api/v1/readings", func(res http.ResponseWriter, req *http.Request) {
         handlers.BasicAuth(handlers.GetReadings)(res, req, dbmap)
     }).Methods("GET")

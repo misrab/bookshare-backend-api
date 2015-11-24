@@ -29,6 +29,15 @@ import (
 */
 
 
+func GetLinkPreview(res http.ResponseWriter, req *http.Request, dbmap *gorp.DbMap) {
+	url := req.FormValue("url")
+
+	// get the url
+	
+
+}
+
+
 func GetReadingsAutocomplete(res http.ResponseWriter, req *http.Request, dbmap *gorp.DbMap) {
 	var items []models.Reading
 
