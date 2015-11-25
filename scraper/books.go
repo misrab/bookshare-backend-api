@@ -62,6 +62,9 @@ func GetBooks() {
         json.Unmarshal([]byte(record[4]), book)
         fmt.Printf("%v\n", book)
 
+        // other fields
+        book.IsBook = true
+
         // TODO add to database
         // err := 
         dbmap.Insert(book)

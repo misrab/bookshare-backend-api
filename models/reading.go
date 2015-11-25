@@ -25,6 +25,8 @@ type Reading struct {
     // subject_times
     // subjects
 
+    IsBook bool `json:"is_book"`
+
 
 
     // TODO Authors - likely a join table

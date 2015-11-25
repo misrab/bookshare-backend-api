@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"encoding/json"
 
 	_ "github.com/lib/pq"
 	"github.com/go-gorp/gorp"
@@ -30,10 +31,22 @@ import (
     curl -u Readingname:password localhost:8080/api/v1/Readings
 */
 
+// example curl:
+// 	curl -H "Content-Type: application/json" -X POST -d '{"url":"https://godoc.org/golang.org/x/net/html"}'  localhost:8000/api/v1/link_preview?token=lalala
+// using post to pass url, which isn't pretty as a query parameter
+func PostLinkPreview(res http.ResponseWriter, req *http.Request, dbmap *gorp.DbMap) {
+	// url := req.FormValue("url")
+	item := struct {
+		Url string `json:"url"`
+	}{}
 
-// e.g. curl localhost:8000/api/v1/link_preview?url=https%3A%2F%2Fgodoc.org%2Fgolang.org%2Fx%2Fnet%2Fhtml&token=
-func GetLinkPreview(res http.ResponseWriter, req *http.Request, dbmap *gorp.DbMap) {
-	url := req.FormValue("url")
+	err := json.NewDecoder(req.Body).Decode(&item)
+	if err != nil { 
+		Respond(item, err, res)
+		return
+	}
+	url := item.Url
+
 
 	// get the url
 	preview, err := utils.ParseLink(url)
@@ -97,11 +110,15 @@ func GetReading(res http.ResponseWriter, req *http.Request, dbmap *gorp.DbMap) {
 // would likely want to use parseFormValues.
 func PostReading(res http.ResponseWriter, req *http.Request, dbmap *gorp.DbMap) {
 	item := new(models.Reading)
-	// item.Email = req.FormValue("email")
-	// item.SetPassword(req.FormValue("password"))
 
-	// save Reading
-	err := dbmap.Insert(item)
+	err := json.NewDecoder(req.Body).Decode(&item)
+	if err != nil { 
+		Respond(item, err, res)
+		return
+	}
+
+	// save reading
+	err = dbmap.Insert(item)
 	Respond(item, err, res)
 }
 

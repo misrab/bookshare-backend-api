@@ -57,6 +57,14 @@ func BasicAuth(pass handler) handler {
         // pass(res, req, dbmap)
         // return
 
+            // token bypass
+        token := req.FormValue("token")
+        // println("found token: " + token)
+        if token == TOKEN {
+            pass(res, req, dbmap)
+            return
+        }
+
 
  		// header := req.Header.Get("Authorization") //req.Header["Authorization"]
  		// if header == "" {
