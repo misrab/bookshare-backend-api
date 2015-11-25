@@ -211,5 +211,7 @@ func PatchUser(res http.ResponseWriter, req *http.Request, dbmap *gorp.DbMap) {
 }
 
 func DeleteUser(res http.ResponseWriter, req *http.Request, dbmap *gorp.DbMap) {
+	// TODO clear associations
+
 	DeleteItem("users", res, req, dbmap)
 }

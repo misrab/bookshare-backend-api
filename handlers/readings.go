@@ -147,5 +147,7 @@ func PatchReading(res http.ResponseWriter, req *http.Request, dbmap *gorp.DbMap)
 }
 
 func DeleteReading(res http.ResponseWriter, req *http.Request, dbmap *gorp.DbMap) {
+	// TODO clear associations
+	
 	DeleteItem("readings", res, req, dbmap)
 }

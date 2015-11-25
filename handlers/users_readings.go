@@ -162,6 +162,10 @@ func StringsToInts64(items ...string) ([]int64, error) {
 
 // user from auth
 func DeleteUserReading(res http.ResponseWriter, req *http.Request, dbmap *gorp.DbMap) {
+	// TODO delete actual reading if it's an article
+	
+
+
 	println("deleting user readgns")
 
 	err, user := GetUserFromAuth(req, dbmap)
