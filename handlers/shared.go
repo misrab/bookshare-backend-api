@@ -24,6 +24,35 @@ import (
 */
 
 
+// e.g. "user_id", "reading_id"
+// returns "where user_id=..." (and ....)
+// if neither returns ""
+// and be inserted into query as such:
+// query = "select * from posts" + where + ....
+// ! assumes field name is the same in db
+func addQueryParameters(req *http.Request, names []string) string {
+	result := ""
+	var prefix string
+	for _, k := range names {
+		v := req.FormValue(k)
+		if v == "" { continue }
+
+		// set prefix
+		if result == "" { 
+			prefix = " where " 
+		} else { 
+			prefix = " and "
+		}
+
+		// set value
+		prefix += k + "=" + v
+
+		result += prefix
+	}
+
+	return result
+}
+
 
 /*
 	Associations

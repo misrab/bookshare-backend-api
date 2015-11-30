@@ -11,12 +11,7 @@ import (
 
 type Reading struct {
 	
-
-    Title string `json:"title"`
-
-
-
-
+    // Open library fields
     // Fields found so far
     // subtitle
     // covers
@@ -24,13 +19,23 @@ type Reading struct {
 
     // subject_times
     // subjects
+    Title string `json:"title"`
 
-    IsBook bool `json:"is_book"`
+    // OL key e.g. "/works/OL10000223W"
+    Key string `json:"key"`
+    // cover ids e.g. [3140972]
+    // get at http://covers.openlibrary.org/b/id/{id}-[S|M|L].jpg
+    Cover int `json:"cover"` //db:"covers,size:1024"
 
 
 
     // TODO Authors - likely a join table
 
+
+    // our extra fields
+    IsBook bool `json:"is_book"`
+
+    
     // Meta
     Id int64 `db:"id" json:"id"`
     CreatedAt int64 `db:"created_at" json:"created_at"`

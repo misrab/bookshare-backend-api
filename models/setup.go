@@ -13,9 +13,28 @@ import (
 
 func ConnectDB() *gorp.DbMap {
     db := pgConnect()
-    return &gorp.DbMap{Db: db, Dialect: gorp.PostgresDialect{}}
+    env := os.Getenv("ENV")
+
+    dbmap := &gorp.DbMap{Db: db, Dialect: gorp.PostgresDialect{}}
+    setupDbmapTables(dbmap)
+
+    if env == "development" {
+        // set logging for development
+        dbmap.TraceOn("[gorp]", log.New(os.Stdout, "myapp:", log.Lmicroseconds)) 
+    }
+
+    return dbmap
 }
 
+
+func setupDbmapTables(dbmap *gorp.DbMap) {
+    dbmap.AddTableWithName(User{}, "users").SetKeys(true, "Id").ColMap("Email").SetUnique(true)
+    // TODO check if this title index is right
+    dbmap.AddTableWithName(Reading{}, "readings").SetKeys(true, "Id").AddIndex("ReadingsIndex", "Btree", []string{"Title"}) // .ColMap("Title").SetUnique(true)
+    dbmap.AddTableWithName(Post{}, "posts").SetKeys(true, "Id")
+    dbmap.AddTableWithName(UserReading{}, "users_readings").SetUniqueTogether("user_id", "reading_id") // join table
+    // dbmap.AddTableWithName(UserTopic{}, "user_quests") AddIndex("UserBooksIndex", "Btree", []string{"user_id", "book_id"}).SetUnique(true) //
+}
 
 //func SetupDB() *sql.DB {
 func SetupDB() *gorp.DbMap {
@@ -33,14 +52,16 @@ func SetupDB() *gorp.DbMap {
     // construct a gorp DbMap
     dbmap := &gorp.DbMap{Db: db, Dialect: gorp.PostgresDialect{}}
 
+
+    setupDbmapTables(dbmap)
     // add a table, setting the table name to 'posts' and
     // specifying that the Id property is an auto incrementing PK
-    dbmap.AddTableWithName(User{}, "users").SetKeys(true, "Id").ColMap("Email").SetUnique(true)
-    // TODO check if this title index is right
-    dbmap.AddTableWithName(Reading{}, "readings").SetKeys(true, "Id").AddIndex("ReadingsIndex", "Btree", []string{"Title"}) // .ColMap("Title").SetUnique(true)
-    dbmap.AddTableWithName(Post{}, "posts").SetKeys(true, "Id")
-    dbmap.AddTableWithName(UserReading{}, "users_readings").SetUniqueTogether("user_id", "reading_id") // join table
-    // dbmap.AddTableWithName(UserTopic{}, "user_quests") AddIndex("UserBooksIndex", "Btree", []string{"user_id", "book_id"}).SetUnique(true) //
+    // dbmap.AddTableWithName(User{}, "users").SetKeys(true, "Id").ColMap("Email").SetUnique(true)
+    // // TODO check if this title index is right
+    // dbmap.AddTableWithName(Reading{}, "readings").SetKeys(true, "Id").AddIndex("ReadingsIndex", "Btree", []string{"Title"}) // .ColMap("Title").SetUnique(true)
+    // dbmap.AddTableWithName(Post{}, "posts").SetKeys(true, "Id")
+    // dbmap.AddTableWithName(UserReading{}, "users_readings").SetUniqueTogether("user_id", "reading_id") // join table
+    // // dbmap.AddTableWithName(UserTopic{}, "user_quests") AddIndex("UserBooksIndex", "Btree", []string{"user_id", "book_id"}).SetUnique(true) //
 
 
 

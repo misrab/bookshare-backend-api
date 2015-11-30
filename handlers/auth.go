@@ -2,6 +2,7 @@ package handlers
  
 import (
     // "fmt"
+    "errors"
 	"strings"
 
     "encoding/base64"
@@ -51,6 +52,14 @@ func DecodeAuthHeader(req *http.Request) (string, string, int) {
     // return pair[0], pair[1], http.StatusOK
 }
 
+
+func Respond401(res http.ResponseWriter) {
+    err := errors.New("bad syntax")
+
+    SetHeaders(res, http.StatusUnauthorized)
+    Respond(nil, err, res)
+}
+
 func BasicAuth(pass handler) handler {
     return func(res http.ResponseWriter, req *http.Request, dbmap *gorp.DbMap) {
         // TEMP
@@ -84,8 +93,9 @@ func BasicAuth(pass handler) handler {
 
         username, hash, errCode := DecodeAuthHeader(req)
         if errCode != http.StatusOK {
-            SetHeaders(res, http.StatusUnauthorized)
-            http.Error(res, "bad syntax", errCode)
+            Respond401(res)
+            // SetHeaders(res, http.StatusUnauthorized)
+            // http.Error(res, "bad syntax", errCode)
             return
         }
         
@@ -93,8 +103,9 @@ func BasicAuth(pass handler) handler {
         item := new(models.User)
         err := dbmap.SelectOne(&item, "select * from users where email=$1", username)
         if err != nil || item.Hash != hash {
-            SetHeaders(res, http.StatusUnauthorized)
-            http.Error(res, "bad syntax", errCode)
+            Respond401(res)
+            // SetHeaders(res, http.StatusUnauthorized)
+            // http.Error(res, "bad syntax", errCode)
             return
         }
 

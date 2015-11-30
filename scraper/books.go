@@ -34,6 +34,12 @@ const (
 // test in /data/dumps_short_works.txt...
 
 
+type BookWrapper struct {
+    models.Reading
+
+    Covers []int `json:"covers"`
+}
+
 func GetBooks() {
 	println("getting books")
 
@@ -43,8 +49,8 @@ func GetBooks() {
 
 
     // connection to database
-    // dbmap := models.ConnectDB()
-    dbmap := models.SetupDB()
+    dbmap := models.ConnectDB()
+    //// dbmap := models.SetupDB()
     
     // TODO get dump and decompress
 
@@ -56,19 +62,31 @@ func GetBooks() {
     for record := range c {
         
 
-        book := new(models.Reading)
+        // book := new(models.Reading)
+        book := new(BookWrapper)
 
         // TODO make a suitable object
         json.Unmarshal([]byte(record[4]), book)
-        fmt.Printf("%v\n", book)
 
         // other fields
         book.IsBook = true
 
-        // TODO add to database
-        // err := 
-        dbmap.Insert(book)
 
+
+        // go from wrapper to actual db model
+        if len(book.Covers) > 0 { 
+            book.Reading.Cover = book.Covers[0]
+        }
+        // book.Reading.Cover = 222
+        // reading := new(models.Reading)
+        reading := &book.Reading
+
+
+
+        fmt.Printf("%+v\n", reading)
+        // add to database
+        err := dbmap.Insert(reading)
+        if err != nil { panic(err) }
 
         // TEMP
         // return
@@ -84,7 +102,7 @@ func GetBooks() {
 
 
 
-
+// convenience debug method
 func readDump(filepath string) {
     c := make(chan []string)
 
@@ -93,20 +111,4 @@ func readDump(filepath string) {
     for record := range c {
         fmt.Printf("%v\n", record)
     }
-
-	// file, err := os.Open(filepath)
- //    if err != nil {
- //        log.Fatal(err)
- //    }
- //    defer file.Close()
-
- //    scanner := bufio.NewScanner(file)
- //    for scanner.Scan() {
- //        fmt.Println(scanner.Text())
- //        return
- //    }
-
- //    if err := scanner.Err(); err != nil {
- //        log.Fatal(err)
- //    }
 }

@@ -41,7 +41,7 @@ func PostLinkPreview(res http.ResponseWriter, req *http.Request, dbmap *gorp.DbM
 	}{}
 
 	err := json.NewDecoder(req.Body).Decode(&item)
-	if err != nil { 
+	if err != nil {
 		Respond(item, err, res)
 		return
 	}

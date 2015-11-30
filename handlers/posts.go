@@ -16,6 +16,11 @@ import (
 	"github.com/misrab/bookshare-backend-api/models"
 )
 
+
+const (
+	POST_OFFSET_INCREMENT = "10" // mirrored on client
+)
+
 /*
     Curl test example
 
@@ -32,6 +37,7 @@ import (
     // get again to check
     curl -u Postname:password localhost:8080/api/v1/Posts
 */
+
 
 /*
 	Non-handlers
@@ -57,9 +63,14 @@ func GetFeedPosts(res http.ResponseWriter, req *http.Request, dbmap *gorp.DbMap)
 	var items []PostFilled
 	// TODO dynamic offset
 	// query := "select * from (select * from posts order by updated_at limit 10 offset 0) a join (select id as user_id, email from users) b on a.user_id = b.user_id"
-		
-	// get posts
-	query := "select * from posts order by updated_at limit 10 offset 0"
+
+	// get offset from url, set to 0 if none
+	offset := req.FormValue("offset")
+	if offset == "" { offset = "0" }
+
+	// get posts (most recent first)
+	// TODO recommendation logic
+	query := "select * from posts order by updated_at desc limit " + POST_OFFSET_INCREMENT + " offset " + offset
 	_, err := dbmap.Select(&items, query)
 	if err != nil { 
 		Respond(nil, err, res)
@@ -104,9 +115,17 @@ func GetFeedPosts(res http.ResponseWriter, req *http.Request, dbmap *gorp.DbMap)
 
 
 
+
+
+// TODO control viewing based on currentUser and public/private
 func GetPosts(res http.ResponseWriter, req *http.Request, dbmap *gorp.DbMap) {
 	var items []models.Post
-	query := "select * from posts order by updated_at"
+
+	// add query params
+	where := addQueryParameters(req, []string{"user_id", "reading_id"})
+
+	query := "select * from posts "+where+" order by updated_at"
+
 	_, err := dbmap.Select(&items, query)
 	if err != nil { 
 		Respond(nil, err, res)
@@ -116,7 +135,7 @@ func GetPosts(res http.ResponseWriter, req *http.Request, dbmap *gorp.DbMap) {
 	Respond(items, err, res)
 }
 
-
+// TODO control viewing based on currentUser and public/private
 func GetPost(res http.ResponseWriter, req *http.Request, dbmap *gorp.DbMap) {
 	var item models.Post
 	result, err := getById(item, req, dbmap)
