@@ -97,6 +97,9 @@ func pgConnect() *sql.DB {
     default:
         connection = os.Getenv("POSTGRESQL_LOCAL_URL")
     }
+
+    connection = os.Getenv("POSTGRESQL_LOCAL_URL")
+    
     matches := regex.FindStringSubmatch(connection)
     sslmode := "disable"
 
