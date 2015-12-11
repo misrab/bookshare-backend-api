@@ -19,6 +19,11 @@ type Post struct {
     ReadingId int64 `json:"reading_id" db:"reading_id"`
 
 
+    // default 0 means public innit
+    Private bool `json:"private" db:"private"`
+
+
+
     // Meta
     Id int64 `db:"id" json:"id"`
     CreatedAt int64 `db:"created_at" json:"created_at"`

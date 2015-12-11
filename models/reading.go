@@ -23,6 +23,8 @@ type Reading struct {
 
     // OL key e.g. "/works/OL10000223W"
     Key string `json:"key"`
+
+    
     // cover ids e.g. [3140972]
     // get at http://covers.openlibrary.org/b/id/{id}-[S|M|L].jpg
     Cover int `json:"cover"` //db:"covers,size:1024"
