@@ -99,6 +99,9 @@ func pgConnect() *sql.DB {
     }
     matches := regex.FindStringSubmatch(connection)
     sslmode := "disable"
+
+    fmt.Printf("%v\n", matches)
+
     spec := fmt.Sprintf("user=%s password=%s host=%s port=%s dbname=%s sslmode=%s", matches[1], matches[2], matches[3], matches[4], matches[5], sslmode)
 
     db, err := sql.Open("postgres", spec)
