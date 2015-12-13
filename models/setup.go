@@ -76,6 +76,7 @@ func SetupDB() *gorp.DbMap {
     }
   
 
+    log.Println("Creating tables...")
     err := dbmap.CreateTablesIfNotExists()
     if err != nil {
         panic(err)
