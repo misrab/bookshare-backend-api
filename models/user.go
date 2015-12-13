@@ -4,9 +4,10 @@ package models
 import (
     "time"
 
-    // "golang.org/x/crypto/bcrypt"
-    "code.google.com/p/go.crypto/bcrypt"
-    "github.com/go-gorp/gorp"
+    "golang.org/x/crypto/bcrypt"
+    // "code.google.com/p/go.crypto/bcrypt"
+    // "github.com/go-gorp/gorp"
+    "gopkg.in/gorp.v1"
 )
 
 

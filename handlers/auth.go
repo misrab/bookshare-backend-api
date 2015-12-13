@@ -9,7 +9,8 @@ import (
     "net/http"
 
     _ "github.com/lib/pq"
-	"github.com/go-gorp/gorp"
+	// "github.com/go-gorp/gorp"
+    "gopkg.in/gorp.v1"
 
     "github.com/misrab/bookshare-backend-api/models"
 )
