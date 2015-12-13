@@ -92,7 +92,7 @@ func pgConnect() *sql.DB {
     env := os.Getenv("ENV")
     regex := regexp.MustCompile("(?i)^postgres://(?:([^:@]+):([^@]*)@)?([^@/:]+):(\\d+)/(.*)$")
     
-    sslmode := "enable"
+    sslmode := "disable"
     var connection string
     switch env {
     //case "staging":
