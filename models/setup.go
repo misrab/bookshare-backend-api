@@ -28,6 +28,8 @@ func ConnectDB() *gorp.DbMap {
     return dbmap
 }
 
+// psql -h <host> -p <port> -u <database>
+
 
 func setupDbmapTables(dbmap *gorp.DbMap) {
     dbmap.AddTableWithNameAndSchema(User{}, "public", "users").SetKeys(true, "Id").ColMap("Email").SetUnique(true)
@@ -60,9 +62,9 @@ func SetupDB() *gorp.DbMap {
 
     // drop all tables for testing
     if env == "development" {
-        log.Println("DROPPING TABLES!")
-        err := dbmap.DropTablesIfExists()
-        if err != nil { panic(err) }
+        // log.Println("DROPPING TABLES!")
+        // err := dbmap.DropTablesIfExists()
+        // if err != nil { panic(err) }
 
         // set logging for development
         dbmap.TraceOn("[gorp]", log.New(os.Stdout, "myapp:", log.Lmicroseconds)) 
