@@ -35,6 +35,8 @@ func main() {
     router := mux.NewRouter()
     dbmap := models.SetupDB()
 
+
+    println("Setting routes up...")
     
     /*
         Routes
