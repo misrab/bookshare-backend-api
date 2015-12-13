@@ -86,7 +86,8 @@ func GetBooks() {
         if err != nil { panic(err) }
 
         // TEMP
-        // return
+        fmt.Printf("%s\n", "finished inserting")
+        return
 
     }
 
