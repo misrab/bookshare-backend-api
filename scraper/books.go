@@ -48,7 +48,7 @@ func GetBooks() {
 
 
     // connection to database
-    // dbmap := models.ConnectDB()
+    dbmap := models.ConnectDB()
     
 
     // read from dump
@@ -82,8 +82,8 @@ func GetBooks() {
 
         fmt.Printf("%+v\n", reading)
         // add to database
-        // err := dbmap.Insert(reading)
-        // if err != nil { panic(err) }
+        err := dbmap.Insert(reading)
+        if err != nil { panic(err) }
 
         // TEMP
         // return
