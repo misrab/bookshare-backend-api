@@ -45,14 +45,11 @@ func GetBooks() {
 
 
     filepath := "./data/dumps_short_works.txt"
-	// readDump(filepat)
 
 
     // connection to database
-    dbmap := models.ConnectDB()
-    //// dbmap := models.SetupDB()
+    // dbmap := models.ConnectDB()
     
-    // TODO get dump and decompress
 
     // read from dump
     c := make(chan []string)
@@ -85,8 +82,8 @@ func GetBooks() {
 
         fmt.Printf("%+v\n", reading)
         // add to database
-        err := dbmap.Insert(reading)
-        if err != nil { panic(err) }
+        // err := dbmap.Insert(reading)
+        // if err != nil { panic(err) }
 
         // TEMP
         // return
