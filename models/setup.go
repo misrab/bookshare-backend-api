@@ -75,7 +75,7 @@ func SetupDB() *gorp.DbMap {
         dbmap.TraceOn("[gorp]", log.New(os.Stdout, "myapp:", log.Lmicroseconds)) 
     }
   
-
+    fmt.Printf("Env is %s...\n", env)
     log.Println("Creating tables...")
     err := dbmap.CreateTablesIfNotExists()
     if err != nil {
