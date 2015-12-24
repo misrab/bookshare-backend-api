@@ -83,7 +83,10 @@ func GetBooks() {
         fmt.Printf("%+v\n", reading)
         // add to database
         err := dbmap.Insert(reading)
-        if err != nil { panic(err) }
+        if err != nil { 
+            // continue
+            panic(err) 
+        }
 
         // TEMP
         // fmt.Printf("%s\n", "finished inserting")
