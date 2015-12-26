@@ -58,9 +58,9 @@ func SetupDB() *gorp.DbMap {
 
     setupDbmapTables(dbmap)
 
-    log.Println("DROPPING TABLES!")
-    err := dbmap.DropTablesIfExists()
-    if err != nil { panic(err) }
+    // log.Println("DROPPING TABLES!")
+    // err := dbmap.DropTablesIfExists()
+    // if err != nil { panic(err) }
 
     // drop all tables for testing
     if env == "development" {
@@ -74,7 +74,7 @@ func SetupDB() *gorp.DbMap {
   
     fmt.Printf("Env is %s...\n", env)
     log.Println("Creating tables...")
-    err = dbmap.CreateTablesIfNotExists()
+    err := dbmap.CreateTablesIfNotExists()
     // fmt.Printf("err is %v...\n", err)
     if err != nil {
         panic(err)

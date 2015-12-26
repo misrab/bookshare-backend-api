@@ -6,11 +6,12 @@ import (
     //    "strings"
     //    "io"
     // "log"
-    // "os"
-    // "time"
+    "strconv"
+    "os"
+    "time"
 
 
-
+    "encoding/csv"
     "encoding/json"
 
 
@@ -48,14 +49,24 @@ func GetBooks() {
 
 
     // connection to database
-    dbmap := models.ConnectDB()
+    // dbmap := models.ConnectDB()
+
+
+    // file to write to
+    f, err := os.Create("out.csv")
+    if err != nil { panic(err) }
+    defer f.Close()
+    writer := csv.NewWriter(f)
+
     
+    now := strconv.FormatInt(time.Now().UnixNano(), 10)
 
     // read from dump
     c := make(chan []string)
 
     go utils.ReadCsv(filepath, c, true, '\t')
 
+    count := 1
     for record := range c {
         
 
@@ -80,19 +91,45 @@ func GetBooks() {
 
 
 
-        fmt.Printf("%+v\n", reading)
-        // add to database
-        err := dbmap.Insert(reading)
-        if err != nil { 
-            // continue
-            panic(err) 
+        new_row := []string{
+            reading.Title, // title
+            reading.Key,   // key
+            strconv.Itoa(reading.Cover), // cover []
+            "true", // isbook
+            strconv.Itoa(count), // id
+            now,
+            now,
         }
 
-        // TEMP
-        // fmt.Printf("%s\n", "finished inserting")
+        // fmt.Printf("%+v\n", reading)
+        // fmt.Printf("writing %+v\n", record)
+
+        err := writer.Write(new_row)
+        if err != nil { panic(err) }
+
+
+        if (count%100 == 0) { 
+            println("Flushing row " + strconv.Itoa(count))
+            writer.Flush()
+        }
+
+        // add to database
+        // err := dbmap.Insert(reading)
+        // if err != nil { 
+        //     // continue
+        //     panic(err) 
+        // }
+
         // return
 
+        count++
+
+        // break
     }
+
+
+    writer.Flush()
+    
 
     // TODO resolve authors or store them
 
@@ -101,7 +138,10 @@ func GetBooks() {
 }
 
 
-
+// COPY readings FROM '/Users/Misrab/go/src/github.com/misrab/bookshare-backend-api/scraper/out.csv' DELIMITER ',' CSV;
+// psql -h <host> -p <port> -u <database>
+// psql -h <host> -p <port> -U <username> -W <password> <database>
+// psql -h booksharepsql.cqhcjpglhfga.ap-southeast-1.rds.amazonaws.com -p 5432 -U misrab -W postgres
 
 // convenience debug method
 func readDump(filepath string) {
