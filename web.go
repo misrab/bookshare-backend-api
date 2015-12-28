@@ -169,5 +169,5 @@ func main() {
     http.Handle("/", router)
 
     log.Println("Listening...")
-    http.ListenAndServe(":8000", nil)
+    log.Fatal(http.ListenAndServe(":8000", nil))
 }

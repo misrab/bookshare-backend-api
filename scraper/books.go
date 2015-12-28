@@ -117,7 +117,7 @@ func GetBooks() {
         // err := dbmap.Insert(reading)
         // if err != nil { 
         //     // continue
-        //     panic(err) 
+        //     panic(err)
         // }
 
         // return
@@ -138,6 +138,7 @@ func GetBooks() {
 }
 
 
+// \copy readings FROM /home/ec2-user/go/src/github.com/misrab/bookshare-backend-api/scraper/out_small.csv with delimiter as ',' csv;
 // COPY readings FROM '/Users/Misrab/go/src/github.com/misrab/bookshare-backend-api/scraper/out.csv' DELIMITER ',' CSV;
 // psql -h <host> -p <port> -u <database>
 // psql -h <host> -p <port> -U <username> -W <password> <database>
