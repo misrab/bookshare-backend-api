@@ -12,6 +12,8 @@ Usage: go run web.go
 
 - possible set defaults manually, indices too
 
+- create index on readings ((lower(title)));
+
 
 
 

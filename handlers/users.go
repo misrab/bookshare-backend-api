@@ -75,7 +75,7 @@ func GetUserFromAuth(req *http.Request, dbmap *gorp.DbMap) (error, *models.User)
 
 func GetUsers(res http.ResponseWriter, req *http.Request, dbmap *gorp.DbMap) {
 	var items []models.User
-	query := "select * from users order by updatedAt"
+	query := "select * from users order by updated_at"
 	_, err := dbmap.Select(&items, query)
 	if err != nil { 
 		Respond(nil, err, res)

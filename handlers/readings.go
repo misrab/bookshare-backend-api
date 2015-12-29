@@ -82,7 +82,6 @@ func GetReadingsAutocomplete(res http.ResponseWriter, req *http.Request, dbmap *
 }
 
 
-
 func GetReadings(res http.ResponseWriter, req *http.Request, dbmap *gorp.DbMap) {
 	var items []models.Reading
 	query := "select * from readings order by updated_at"

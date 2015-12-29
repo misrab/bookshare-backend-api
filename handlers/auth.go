@@ -41,7 +41,7 @@ func DecodeAuthHeader(req *http.Request) (string, string, int) {
 
     pair := strings.SplitN(string(payload), ":", 2)
 
-    
+    // fmt.Printf("Pair is %v\n", pair)
 
     // TODO check pair len = 2 ?
     if len(pair) < 2 {
